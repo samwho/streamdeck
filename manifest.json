@@ -1,0 +1,40 @@
+{
+  "Actions": [
+    {
+      "Icon": "actionIcon",
+      "Name": "LiveSplit Go",
+      "States": [
+        {
+          "Image": "actionDefaultImage",
+          "TitleAlignment": "middle",
+          "FontSize": "16"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "LiveSplit",
+      "UUID": "dev.samwho.streamdeck.livesplit"
+    }
+  ],
+  "SDKVersion": 2,
+  "Author": "Sam Rose",
+  "CodePath": "streamdeck-livesplit.exe",
+  "Description": "Test",
+  "Name": "Test",
+  "Icon": "pluginIcon",
+  "URL": "https://samwho.dev",
+  "Version": "0.1",
+  "OS": [
+    {
+        "Platform": "mac",
+        "MinimumVersion" : "10.11"
+    },
+    {
+        "Platform": "windows",
+        "MinimumVersion" : "10"
+    }
+  ],
+  "Software":
+    {
+        "MinimumVersion" : "4.1"
+    }
+}
