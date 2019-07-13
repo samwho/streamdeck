@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/samwho/streamdeck-livesplit/streamdeck"
 )
@@ -50,8 +51,11 @@ func run(ctx context.Context, params streamdeck.RegistrationParams) error {
 		return err
 	}
 
-	client.RegisterHandler(streamdeck.KeyDown, func(ctx context.Context, client *streamdeck.Client, event streamdeck.Event) {
-		return client.Log("key down!")
+	counter := 0
+	client.RegisterHandler(streamdeck.KeyDown, func(ctx context.Context, client *streamdeck.Client, event streamdeck.Event) error {
+		counter++
+		log.Printf("key down! counter: %d\n", counter)
+		return client.SetTitle(ctx, strconv.Itoa(counter), streamdeck.HardwareAndSoftware)
 	})
 
 	log.Println("waiting for connection to close...")

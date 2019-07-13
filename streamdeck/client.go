@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type EventHandler func(ctx context.Context, client *Client, event EventReceived) error
+type EventHandler func(ctx context.Context, client *Client, event Event) error
 
 type Client struct {
 	c        *websocket.Conn
@@ -45,24 +45,39 @@ func NewClient(ctx context.Context, params RegistrationParams) (*Client, error) 
 		defer close(done)
 		log.Println("starting read loop")
 		for {
-			_, message, err := client.c.ReadMessage()
+			messageType, message, err := client.c.ReadMessage()
 			if err != nil {
-				log.Println("read: ", err)
+				log.Printf("read error: %v\n", err)
 				return
 			}
 
-			event := EventReceived{}
+			if messageType == websocket.PingMessage {
+				log.Printf("received ping message\n")
+				if err := client.c.WriteMessage(websocket.PongMessage, []byte{}); err != nil {
+					log.Printf("error while ponging: %v\n", err)
+				}
+				continue
+			}
+
+			if messageType == websocket.CloseMessage {
+				// handle close message
+				panic("websocket close!")
+			}
+
+			event := Event{}
 			if err := json.Unmarshal(message, &event); err != nil {
 				log.Printf("failed to unmarshal received event: %s\n", string(message))
-				return
-			}
-
-			ctx := setContext(ctx, event.Context)
-			for _, f := range client.handlers[event.Event] {
-				f(ctx, client, event)
+				continue
 			}
 
 			log.Println("recv: ", string(message))
+
+			ctx := setContext(ctx, event.Context)
+			for _, f := range client.handlers[event.Event] {
+				if err := f(ctx, client, event); err != nil {
+					log.Printf("error in handler for event %v: %v\n", event.Event, err)
+				}
+			}
 		}
 	}()
 
@@ -74,23 +89,49 @@ func NewClient(ctx context.Context, params RegistrationParams) (*Client, error) 
 
 func (client *Client) register(params RegistrationParams) error {
 	log.Println("sending register event...")
-	if err := client.c.WriteJSON(NewRegisterEvent(params)); err != nil {
+	if err := client.send(Event{UUID: params.PluginUUID, Event: params.RegisterEvent}); err != nil {
 		client.Close()
 		return err
 	}
 	return nil
 }
 
+func (client *Client) send(event Event) error {
+	j, _ := json.Marshal(event)
+	log.Printf("sending message: %v\n", string(j))
+	return client.c.WriteJSON(event)
+}
+
 func (client *Client) SetSettings(ctx context.Context, settings interface{}) error {
-	return client.c.WriteJSON(NewEvent(ctx, SetSettings, settings))
+	return client.send(NewEvent(ctx, SetSettings, settings))
 }
 
 func (client *Client) GetSettings(ctx context.Context) error {
-	return client.c.WriteJSON(NewEvent(ctx, GetSettings, nil))
+	return client.send(NewEvent(ctx, GetSettings, nil))
 }
 
-func (client *Client) Log(message string) error {
-	return client.c.WriteJSON(NewLogMessage(message))
+func (client *Client) SetGlobalSettings(ctx context.Context, settings interface{}) error {
+	return client.send(NewEvent(ctx, SetGlobalSettings, settings))
+}
+
+func (client *Client) GetGlobalSettings(ctx context.Context) error {
+	return client.send(NewEvent(ctx, GetGlobalSettings, nil))
+}
+
+func (client *Client) OpenURL(ctx context.Context, u url.URL) error {
+	return client.send(NewEvent(ctx, OpenURL, OpenURLPayload{URL: u.String()}))
+}
+
+func (client *Client) LogMessage(message string) error {
+	return client.send(NewEvent(nil, LogMessage, LogMessagePayload{Message: message}))
+}
+
+func (client *Client) SetTitle(ctx context.Context, title string, target Target) error {
+	return client.send(NewEvent(ctx, SetTitle, SetTitlePayload{Title: title, Target: target}))
+}
+
+func (client *Client) SetImage(ctx context.Context, base64image string, target Target) error {
+	return client.send(NewEvent(ctx, SetImage, SetImagePayload{Base64Image: base64image, Target: target}))
 }
 
 func (client *Client) RegisterHandler(eventName string, handler EventHandler) {
