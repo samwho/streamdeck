@@ -31,3 +31,11 @@ const (
 	SetState          = "setState"
 	SwitchToProfile   = "switchToProfile"
 )
+
+type Target int
+
+const (
+	HardwareAndSoftware Target = 0
+	OnlyHardware        Target = 1
+	OnlySoftware        Target = 2
+)

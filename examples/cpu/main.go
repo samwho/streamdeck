@@ -9,8 +9,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/samwho/streamdeck/payload"
-
 	"github.com/samwho/streamdeck"
 	sdcontext "github.com/samwho/streamdeck/context"
 	"github.com/shirou/gopsutil/cpu"
@@ -88,12 +86,12 @@ func setup(client *streamdeck.Client) {
 					continue
 				}
 
-				if err := client.SetImage(ctx, img, payload.HardwareAndSoftware); err != nil {
+				if err := client.SetImage(ctx, img, streamdeck.HardwareAndSoftware); err != nil {
 					log.Printf("error setting image: %v\n", err)
 					continue
 				}
 
-				if err := client.SetTitle(ctx, fmt.Sprintf("CPU\n%d%%", int(r[0])), payload.HardwareAndSoftware); err != nil {
+				if err := client.SetTitle(ctx, fmt.Sprintf("CPU\n%d%%", int(r[0])), streamdeck.HardwareAndSoftware); err != nil {
 					log.Printf("error setting title: %v\n", err)
 					continue
 				}

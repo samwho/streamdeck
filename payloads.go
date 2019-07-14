@@ -1,44 +1,34 @@
-package payload
+package streamdeck
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
-type Target int
-
-const (
-	HardwareAndSoftware Target = 0
-	OnlyHardware        Target = 1
-	OnlySoftware        Target = 2
-)
-
-type LogMessage struct {
+type LogMessagePayload struct {
 	Message string `json:"message"`
 }
 
-type OpenURL struct {
+type OpenURLPayload struct {
 	URL string `json:"url"`
 }
 
-type SetTitle struct {
+type SetTitlePayload struct {
 	Title  string `json:"title"`
 	Target Target `json:"target"`
 }
 
-type SetImage struct {
+type SetImagePayload struct {
 	Base64Image string `json:"image"`
 	Target      Target `json:"target"`
 }
 
-type SetState struct {
+type SetStatePayload struct {
 	State int `json:"state"`
 }
 
-type SwitchProfile struct {
+type SwitchProfilePayload struct {
 	Profile string `json:"profile"`
 }
 
-type DidReceiveSettings struct {
+type DidReceiveSettingsPayload struct {
 	Settings        json.RawMessage `json:"settings,omitempty"`
 	Coordinates     Coordinates     `json:"coordinates,omitempty"`
 	IsInMultiAction bool            `json:"isInMultiAction,omitempty"`
@@ -49,11 +39,11 @@ type Coordinates struct {
 	Row    int `json:"row,omitempty"`
 }
 
-type DidReceiveGlobalSettings struct {
+type DidReceiveGlobalSettingsPayload struct {
 	Settings json.RawMessage `json:"settings,omitempty"`
 }
 
-type KeyDown struct {
+type KeyDownPayload struct {
 	Settings         json.RawMessage `json:"settings,omitempty"`
 	Coordinates      Coordinates     `json:"coordinates,omitempty"`
 	State            int             `json:"state,omitempty"`
@@ -61,7 +51,7 @@ type KeyDown struct {
 	IsInMultiAction  bool            `json:"isInMultiAction,omitempty"`
 }
 
-type KeyUp struct {
+type KeyUpPayload struct {
 	Settings         json.RawMessage `json:"settings,omitempty"`
 	Coordinates      Coordinates     `json:"coordinates,omitempty"`
 	State            int             `json:"state,omitempty"`
@@ -69,21 +59,21 @@ type KeyUp struct {
 	IsInMultiAction  bool            `json:"isInMultiAction,omitempty"`
 }
 
-type WillAppear struct {
+type WillAppearPayload struct {
 	Settings        json.RawMessage `json:"settings,omitempty"`
 	Coordinates     Coordinates     `json:"coordinates,omitempty"`
 	State           int             `json:"state,omitempty"`
 	IsInMultiAction bool            `json:"isInMultiAction,omitempty"`
 }
 
-type WillDisappear struct {
+type WillDisappearPayload struct {
 	Settings        json.RawMessage `json:"settings,omitempty"`
 	Coordinates     Coordinates     `json:"coordinates,omitempty"`
 	State           int             `json:"state,omitempty"`
 	IsInMultiAction bool            `json:"isInMultiAction,omitempty"`
 }
 
-type TitleParametersDidChange struct {
+type TitleParametersDidChangePayload struct {
 	Settings        json.RawMessage `json:"settings,omitempty"`
 	Coordinates     Coordinates     `json:"coordinates,omitempty"`
 	State           int             `json:"state,omitempty"`
@@ -101,10 +91,10 @@ type TitleParameters struct {
 	TitleColor     string `json:"titleColor,omitempty"`
 }
 
-type ApplicationDidLaunch struct {
+type ApplicationDidLaunchPayload struct {
 	Application string `json:"application,omitempty"`
 }
 
-type ApplicationDidTerminate struct {
+type ApplicationDidTerminatePayload struct {
 	Application string `json:"application,omitempty"`
 }

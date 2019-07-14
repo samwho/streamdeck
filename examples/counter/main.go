@@ -11,7 +11,6 @@ import (
 	"strconv"
 
 	"github.com/samwho/streamdeck"
-	"github.com/samwho/streamdeck/payload"
 )
 
 const (
@@ -53,7 +52,7 @@ func setupCounter(client *streamdeck.Client) {
 	settings := make(map[string]*Settings)
 
 	action.RegisterHandler(streamdeck.WillAppear, func(ctx context.Context, client *streamdeck.Client, event streamdeck.Event) error {
-		p := payload.WillAppear{}
+		p := streamdeck.WillAppearPayload{}
 		if err := json.Unmarshal(event.Payload, &p); err != nil {
 			return err
 		}
@@ -73,11 +72,11 @@ func setupCounter(client *streamdeck.Client) {
 			return err
 		}
 
-		if err := client.SetImage(ctx, bg, payload.HardwareAndSoftware); err != nil {
+		if err := client.SetImage(ctx, bg, streamdeck.HardwareAndSoftware); err != nil {
 			return err
 		}
 
-		return client.SetTitle(ctx, strconv.Itoa(s.Counter), payload.HardwareAndSoftware)
+		return client.SetTitle(ctx, strconv.Itoa(s.Counter), streamdeck.HardwareAndSoftware)
 	})
 
 	action.RegisterHandler(streamdeck.WillDisappear, func(ctx context.Context, client *streamdeck.Client, event streamdeck.Event) error {
@@ -97,7 +96,7 @@ func setupCounter(client *streamdeck.Client) {
 			return err
 		}
 
-		return client.SetTitle(ctx, strconv.Itoa(s.Counter), payload.HardwareAndSoftware)
+		return client.SetTitle(ctx, strconv.Itoa(s.Counter), streamdeck.HardwareAndSoftware)
 	})
 }
 

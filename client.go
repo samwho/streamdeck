@@ -12,7 +12,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	sdcontext "github.com/samwho/streamdeck/context"
-	"github.com/samwho/streamdeck/payload"
 )
 
 type EventHandler func(ctx context.Context, client *Client, event Event) error
@@ -153,19 +152,19 @@ func (client *Client) GetGlobalSettings(ctx context.Context) error {
 }
 
 func (client *Client) OpenURL(ctx context.Context, u url.URL) error {
-	return client.send(NewEvent(ctx, OpenURL, payload.OpenURL{URL: u.String()}))
+	return client.send(NewEvent(ctx, OpenURL, OpenURLPayload{URL: u.String()}))
 }
 
 func (client *Client) LogMessage(message string) error {
-	return client.send(NewEvent(nil, LogMessage, payload.LogMessage{Message: message}))
+	return client.send(NewEvent(nil, LogMessage, LogMessagePayload{Message: message}))
 }
 
-func (client *Client) SetTitle(ctx context.Context, title string, target payload.Target) error {
-	return client.send(NewEvent(ctx, SetTitle, payload.SetTitle{Title: title, Target: target}))
+func (client *Client) SetTitle(ctx context.Context, title string, target Target) error {
+	return client.send(NewEvent(ctx, SetTitle, SetTitlePayload{Title: title, Target: target}))
 }
 
-func (client *Client) SetImage(ctx context.Context, base64image string, target payload.Target) error {
-	return client.send(NewEvent(ctx, SetImage, payload.SetImage{Base64Image: base64image, Target: target}))
+func (client *Client) SetImage(ctx context.Context, base64image string, target Target) error {
+	return client.send(NewEvent(ctx, SetImage, SetImagePayload{Base64Image: base64image, Target: target}))
 }
 
 func (client *Client) ShowAlert(ctx context.Context) error {
@@ -177,11 +176,11 @@ func (client *Client) ShowOk(ctx context.Context) error {
 }
 
 func (client *Client) SetState(ctx context.Context, state int) error {
-	return client.send(NewEvent(ctx, SetState, payload.SetState{State: state}))
+	return client.send(NewEvent(ctx, SetState, SetStatePayload{State: state}))
 }
 
 func (client *Client) SwitchToProfile(ctx context.Context, profile string) error {
-	return client.send(NewEvent(ctx, SwitchToProfile, payload.SwitchProfile{Profile: profile}))
+	return client.send(NewEvent(ctx, SwitchToProfile, SwitchProfilePayload{Profile: profile}))
 }
 
 func (client *Client) SendToPropertyInspector(ctx context.Context, payload interface{}) error {
