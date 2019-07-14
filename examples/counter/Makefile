@@ -1,9 +1,9 @@
 GO = go
 GOFLAGS =
-INSTALLDIR = "$(APPDATA)\Elgato\StreamDeck\Plugins\dev.samwho.streamdeck.livesplit.sdPlugin"
+INSTALLDIR = "$(APPDATA)\Elgato\StreamDeck\Plugins\dev.samwho.streamdeck.counter.sdPlugin"
 LOGDIR = "$(APPDATA)\Elgato\StreamDeck\logs"
 
-.PHONY: test install build
+.PHONY: test install build logs
 
 build:
 	$(GO) build $(GOFLAGS)
@@ -14,9 +14,8 @@ test:
 install: build
 	rm -rf $(INSTALLDIR)
 	mkdir $(INSTALLDIR)
-	cp *.png $(INSTALLDIR)
 	cp *.json $(INSTALLDIR)
 	cp *.exe $(INSTALLDIR)
 
 logs:
-	tail -f $(LOGDIR)/streamdeck-livesplit.log
+	tail -f $(LOGDIR)/counter.log

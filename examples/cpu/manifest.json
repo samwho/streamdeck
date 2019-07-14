@@ -1,0 +1,37 @@
+{
+  "Actions": [
+    {
+      "Name": "CPU graph",
+      "States": [
+        {
+          "TitleAlignment": "middle",
+          "FontSize": "14"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Show a pretty little CPU graph",
+      "UUID": "dev.samwho.streamdeck.cpu"
+    }
+  ],
+  "SDKVersion": 2,
+  "Author": "Sam Rose",
+  "CodePath": "cpu.exe",
+  "Description": "Show a pretty little CPU graph",
+  "Name": "CPU graph",
+  "URL": "https://samwho.dev",
+  "Version": "0.1",
+  "OS": [
+    {
+        "Platform": "mac",
+        "MinimumVersion" : "10.11"
+    },
+    {
+        "Platform": "windows",
+        "MinimumVersion" : "10"
+    }
+  ],
+  "Software":
+    {
+        "MinimumVersion" : "4.1"
+    }
+}

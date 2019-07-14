@@ -1,26 +1,23 @@
 {
   "Actions": [
     {
-      "Icon": "actionIcon",
-      "Name": "LiveSplit Go",
+      "Name": "Counter",
       "States": [
         {
-          "Image": "actionDefaultImage",
           "TitleAlignment": "middle",
-          "FontSize": "16"
+          "FontSize": "24"
         }
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "LiveSplit",
-      "UUID": "dev.samwho.streamdeck.livesplit"
+      "Tooltip": "Count something!",
+      "UUID": "dev.samwho.streamdeck.counter"
     }
   ],
   "SDKVersion": 2,
   "Author": "Sam Rose",
-  "CodePath": "streamdeck-livesplit.exe",
-  "Description": "Test",
-  "Name": "Test",
-  "Icon": "pluginIcon",
+  "CodePath": "counter.exe",
+  "Description": "Count something!",
+  "Name": "Counter",
   "URL": "https://samwho.dev",
   "Version": "0.1",
   "OS": [

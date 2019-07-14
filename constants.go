@@ -1,7 +1,5 @@
 package streamdeck
 
-import "context"
-
 const (
 	DidReceiveSettings            = "didReceiveSettings"
 	DidReceiveGlobalSettings      = "didReceiveGlobalSettings"
@@ -33,21 +31,3 @@ const (
 	SetState          = "setState"
 	SwitchToProfile   = "switchToProfile"
 )
-
-type contextKeyType int
-
-const (
-	contextKey contextKeyType = iota
-)
-
-func getContext(ctx context.Context) string {
-	if ctx == nil {
-		return ""
-	}
-
-	return ctx.Value(contextKey).(string)
-}
-
-func setContext(ctx context.Context, streamdeckContext string) context.Context {
-	return context.WithValue(ctx, contextKey, streamdeckContext)
-}
