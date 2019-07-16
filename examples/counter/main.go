@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -13,20 +14,17 @@ import (
 	"github.com/samwho/streamdeck"
 )
 
-const (
-	logFile = "C:\\Users\\samwh\\AppData\\Roaming\\Elgato\\StreamDeck\\logs\\streamdeck-livesplit.log"
-)
-
 type Settings struct {
 	Counter int `json:"counter"`
 }
 
 func main() {
-	f, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := ioutil.TempFile("", "streamdeck-counter.log")
 	if err != nil {
-		log.Fatalf("error opening file: %v", err)
+		log.Fatalf("error creating temp file: %v", err)
 	}
 	defer f.Close()
+
 	log.SetOutput(f)
 
 	ctx := context.Background()
@@ -42,12 +40,12 @@ func run(ctx context.Context) error {
 	}
 
 	client := streamdeck.NewClient(ctx, params)
-	setupCounter(client)
+	setup(client)
 
 	return client.Run()
 }
 
-func setupCounter(client *streamdeck.Client) {
+func setup(client *streamdeck.Client) {
 	action := client.Action("dev.samwho.streamdeck.counter")
 	settings := make(map[string]*Settings)
 
@@ -101,9 +99,9 @@ func setupCounter(client *streamdeck.Client) {
 }
 
 func background() image.Image {
-	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
-	for x := 0; x < 20; x++ {
-		for y := 0; y < 20; y++ {
+	img := image.NewRGBA(image.Rect(0, 0, 72, 72))
+	for x := 0; x < 72; x++ {
+		for y := 0; y < 72; y++ {
 			img.Set(x, y, color.Black)
 		}
 	}

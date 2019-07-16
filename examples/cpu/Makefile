@@ -1,7 +1,6 @@
 GO = go
 GOFLAGS =
 INSTALLDIR = "$(APPDATA)\Elgato\StreamDeck\Plugins\dev.samwho.streamdeck.cpu.sdPlugin"
-LOGDIR = "$(APPDATA)\Elgato\StreamDeck\logs"
 
 .PHONY: test install build logs
 
@@ -15,7 +14,9 @@ install: build
 	rm -rf $(INSTALLDIR)
 	mkdir $(INSTALLDIR)
 	cp *.json $(INSTALLDIR)
+	cp *.html $(INSTALLDIR)
+	cp *.css $(INSTALLDIR)
 	cp *.exe $(INSTALLDIR)
 
 logs:
-	tail -f $(LOGDIR)/cpu.log
+	tail -f "$(TMP)"/streamdeck-cpu.log*

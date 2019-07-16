@@ -1,7 +1,6 @@
 GO = go
 GOFLAGS =
 INSTALLDIR = "$(APPDATA)\Elgato\StreamDeck\Plugins\dev.samwho.streamdeck.counter.sdPlugin"
-LOGDIR = "$(APPDATA)\Elgato\StreamDeck\logs"
 
 .PHONY: test install build logs
 
@@ -18,4 +17,4 @@ install: build
 	cp *.exe $(INSTALLDIR)
 
 logs:
-	tail -f $(LOGDIR)/counter.log
+	tail -f "$(TMP)"/streamdeck-counter.log*

@@ -1,0 +1,47 @@
+<head>
+  <meta charset="utf-8" />
+  <title>CPU graph</title>
+  <link rel="stylesheet" href="sdpi.css">
+</head>
+
+<body>
+  <div class="sdpi-wrapper">
+    <div type="checkbox" class="sdpi-item">
+      <div class="sdpi-item-label">Show text</div>
+      <div class="sdpi-item-child">
+        <input id="showText" type="checkbox" value="yes" onchange="sendToPlugin({ showText: document.getElementById('showText').checked })">
+        <label for="showText" class="sdpi-item-label"><span></span></label>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var websocket = null,
+      uuid = null,
+      actionInfo = {};
+
+    function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, inActionInfo) {
+      uuid = inUUID;
+      actionInfo = JSON.parse(inActionInfo); // cache the info
+      websocket = new WebSocket('ws://localhost:' + inPort);
+
+      websocket.onopen = function () {
+        websocket.send(JSON.stringify({
+          event: inRegisterEvent,
+          uuid: inUUID
+        }));
+      }
+    }
+
+    function sendToPlugin(obj) {
+      if (websocket) {
+        websocket.send(JSON.stringify({
+          "action": actionInfo['action'],
+          "event": "sendToPlugin",
+          "context": uuid,
+          "payload": obj,
+        }));
+      }
+    }
+  </script>
+</body>

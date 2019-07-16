@@ -8,6 +8,7 @@
           "FontSize": "14"
         }
       ],
+      "PropertyInspectorPath": "cpu_property_inspector.html",
       "SupportedInMultiActions": false,
       "Tooltip": "Show a pretty little CPU graph",
       "UUID": "dev.samwho.streamdeck.cpu"

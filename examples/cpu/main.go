@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -15,16 +17,18 @@ import (
 )
 
 const (
-	logFile = "C:\\Users\\samwh\\AppData\\Roaming\\Elgato\\StreamDeck\\logs\\cpu.log"
-
 	imgX = 72
 	imgY = 72
 )
 
+type PropertyInspectorSettings struct {
+	ShowText bool `json:"showText,omitempty"`
+}
+
 func main() {
-	f, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := ioutil.TempFile("", "streamdeck-cpu.log")
 	if err != nil {
-		log.Fatalf("error opening file: %v", err)
+		log.Fatalf("error creating tempfile: %v", err)
 	}
 	defer f.Close()
 	log.SetOutput(f)
@@ -50,7 +54,12 @@ func run(ctx context.Context) error {
 func setup(client *streamdeck.Client) {
 	action := client.Action("dev.samwho.streamdeck.cpu")
 
+	pi := &PropertyInspectorSettings{}
 	contexts := make(map[string]struct{})
+
+	action.RegisterHandler(streamdeck.SendToPlugin, func(ctx context.Context, client *streamdeck.Client, event streamdeck.Event) error {
+		return json.Unmarshal(event.Payload, pi)
+	})
 
 	action.RegisterHandler(streamdeck.WillAppear, func(ctx context.Context, client *streamdeck.Client, event streamdeck.Event) error {
 		contexts[event.Context] = struct{}{}
@@ -65,7 +74,7 @@ func setup(client *streamdeck.Client) {
 	readings := make([]float64, imgX, imgX)
 
 	go func() {
-		for range time.Tick(time.Second) {
+		for range time.Tick(time.Second / 4) {
 			for i := 0; i < imgX-1; i++ {
 				readings[i] = readings[i+1]
 			}
@@ -91,7 +100,12 @@ func setup(client *streamdeck.Client) {
 					continue
 				}
 
-				if err := client.SetTitle(ctx, fmt.Sprintf("CPU\n%d%%", int(r[0])), streamdeck.HardwareAndSoftware); err != nil {
+				title := ""
+				if pi.ShowText {
+					title = fmt.Sprintf("CPU\n%d%%", int(r[0]))
+				}
+
+				if err := client.SetTitle(ctx, title, streamdeck.HardwareAndSoftware); err != nil {
 					log.Printf("error setting title: %v\n", err)
 					continue
 				}
