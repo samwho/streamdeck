@@ -89,6 +89,9 @@ func (client *Client) Run() error {
 				for _, f := range client.handlers[event.Event] {
 					if err := f(ctx, client, event); err != nil {
 						log.Printf("error in handler for event %v: %v\n", event.Event, err)
+						if err := client.ShowAlert(ctx); err != nil {
+							log.Printf("error trying to show alert")
+						}
 					}
 				}
 				continue
