@@ -36,10 +36,7 @@ func NewClient(ctx context.Context, params RegistrationParams) *Client {
 func (client *Client) Action(uuid string) *Action {
 	_, ok := client.actions[uuid]
 	if !ok {
-		client.actions[uuid] = &Action{
-			uuid:     uuid,
-			handlers: make(map[string][]EventHandler),
-		}
+		client.actions[uuid] = newAction(uuid)
 	}
 	return client.actions[uuid]
 }
@@ -99,8 +96,8 @@ func (client *Client) Run() error {
 
 			action, ok := client.actions[event.Action]
 			if !ok {
-				log.Printf("received event for nonexistent action: %v\n", event.Action)
-				continue
+				action = client.Action(event.Action)
+				action.addContext(ctx)
 			}
 
 			for _, f := range action.handlers[event.Event] {
