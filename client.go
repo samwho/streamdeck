@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -13,6 +14,14 @@ import (
 	"github.com/gorilla/websocket"
 	sdcontext "github.com/samwho/streamdeck/context"
 )
+
+var (
+	logger = log.New(ioutil.Discard, "streamdeck", log.LstdFlags)
+)
+
+func Log() *log.Logger {
+	return logger
+}
 
 type EventHandler func(ctx context.Context, client *Client, event Event) error
 
@@ -58,25 +67,25 @@ func (client *Client) Run() error {
 		for {
 			messageType, message, err := client.c.ReadMessage()
 			if err != nil {
-				log.Printf("read error: %v\n", err)
+				logger.Printf("read error: %v\n", err)
 				return
 			}
 
 			if messageType == websocket.PingMessage {
-				log.Printf("received ping message\n")
+				logger.Printf("received ping message\n")
 				if err := client.c.WriteMessage(websocket.PongMessage, []byte{}); err != nil {
-					log.Printf("error while ponging: %v\n", err)
+					logger.Printf("error while ponging: %v\n", err)
 				}
 				continue
 			}
 
 			event := Event{}
 			if err := json.Unmarshal(message, &event); err != nil {
-				log.Printf("failed to unmarshal received event: %s\n", string(message))
+				logger.Printf("failed to unmarshal received event: %s\n", string(message))
 				continue
 			}
 
-			log.Println("recv: ", string(message))
+			logger.Println("recv: ", string(message))
 
 			ctx := sdcontext.WithContext(client.ctx, event.Context)
 			ctx = sdcontext.WithDevice(ctx, event.Device)
@@ -85,9 +94,9 @@ func (client *Client) Run() error {
 			if event.Action == "" {
 				for _, f := range client.handlers[event.Event] {
 					if err := f(ctx, client, event); err != nil {
-						log.Printf("error in handler for event %v: %v\n", event.Event, err)
+						logger.Printf("error in handler for event %v: %v\n", event.Event, err)
 						if err := client.ShowAlert(ctx); err != nil {
-							log.Printf("error trying to show alert")
+							logger.Printf("error trying to show alert")
 						}
 					}
 				}
@@ -102,7 +111,7 @@ func (client *Client) Run() error {
 
 			for _, f := range action.handlers[event.Event] {
 				if err := f(ctx, client, event); err != nil {
-					log.Printf("error in handler for event %v: %v\n", event.Event, err)
+					logger.Printf("error in handler for event %v: %v\n", event.Event, err)
 				}
 			}
 		}
@@ -116,7 +125,7 @@ func (client *Client) Run() error {
 	case <-client.done:
 		return nil
 	case <-interrupt:
-		log.Printf("interrupted, closing...\n")
+		logger.Printf("interrupted, closing...\n")
 		return client.Close()
 	}
 }
@@ -131,7 +140,7 @@ func (client *Client) register(params RegistrationParams) error {
 
 func (client *Client) send(event Event) error {
 	j, _ := json.Marshal(event)
-	log.Printf("sending message: %v\n", string(j))
+	logger.Printf("sending message: %v\n", string(j))
 	return client.c.WriteJSON(event)
 }
 
