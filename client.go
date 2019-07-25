@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -26,12 +27,13 @@ func Log() *log.Logger {
 type EventHandler func(ctx context.Context, client *Client, event Event) error
 
 type Client struct {
-	ctx      context.Context
-	params   RegistrationParams
-	c        *websocket.Conn
-	actions  map[string]*Action
-	handlers map[string][]EventHandler
-	done     chan struct{}
+	ctx       context.Context
+	params    RegistrationParams
+	c         *websocket.Conn
+	actions   map[string]*Action
+	handlers  map[string][]EventHandler
+	done      chan struct{}
+	sendMutex sync.Mutex
 }
 
 func NewClient(ctx context.Context, params RegistrationParams) *Client {
@@ -140,6 +142,8 @@ func (client *Client) register(params RegistrationParams) error {
 
 func (client *Client) send(event Event) error {
 	j, _ := json.Marshal(event)
+	client.sendMutex.Lock()
+	defer client.sendMutex.Unlock()
 	logger.Printf("sending message: %v\n", string(j))
 	return client.c.WriteJSON(event)
 }
