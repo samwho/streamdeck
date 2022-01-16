@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	sdcontext "github.com/StefanZoerner/streamdeck/context"
+	sdcontext "github.com/samwho/streamdeck/context"
 )
 
 type Event struct {

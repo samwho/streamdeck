@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	sdcontext "github.com/StefanZoerner/streamdeck/context"
+	sdcontext "github.com/samwho/streamdeck/context"
 )
 
 var (

@@ -3,7 +3,7 @@ package streamdeck
 import (
 	"context"
 
-	sdcontext "github.com/StefanZoerner/streamdeck/context"
+	sdcontext "github.com/samwho/streamdeck/context"
 )
 
 type Action struct {
