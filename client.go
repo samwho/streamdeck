@@ -38,10 +38,11 @@ type Client struct {
 
 func NewClient(ctx context.Context, params RegistrationParams) *Client {
 	return &Client{
-		ctx:     ctx,
-		params:  params,
-		actions: make(map[string]*Action),
-		done:    make(chan struct{}),
+		ctx:      ctx,
+		params:   params,
+		actions:  make(map[string]*Action),
+		handlers: make(map[string][]EventHandler),
+		done:     make(chan struct{}),
 	}
 }
 func (client *Client) Action(uuid string) *Action {
@@ -202,6 +203,10 @@ func (client *Client) SendToPropertyInspector(ctx context.Context, payload inter
 
 func (client *Client) SendToPlugin(ctx context.Context, payload interface{}) error {
 	return client.send(NewEvent(ctx, SendToPlugin, payload))
+}
+
+func (client *Client) RegisterHandler(eventName string, handler EventHandler) {
+	client.handlers[eventName] = append(client.handlers[eventName], handler)
 }
 
 func (client *Client) Close() error {
